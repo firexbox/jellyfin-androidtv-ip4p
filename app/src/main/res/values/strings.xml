@@ -314,6 +314,14 @@
     <string name="server_connection_failed_candidates">Unable to connect to server, tried the following addresses: %1$s</string>
     <string name="server_field_empty">The address cannot be empty</string>
     <!-- IP4P -->
+    <!-- IP2P -->
+    <string name="ip2p_toggle_label">IP2P address (dual A-record NAT traversal)</string>
+    <string name="ip2p_error_ip_decode">Failed to decode IP address.\nVerify the domain A record is configured correctly.</string>
+    <string name="ip2p_error_port_decode">Failed to resolve service port.\nVerify the service subdomain A record is configured.</string>
+    <string name="ip2p_error_dns_timeout">DNS resolution timed out.\nCheck your network connection and try again.</string>
+    <string name="ip2p_error_dns_failed">DNS resolution failed.\nCheck the domain name and your network connection.</string>
+    <string name="ip2p_connected_to">Connected via IP2P: %1$s</string>
+
     <string name="ip4p_toggle_label">IP4P address (natmap NAT traversal)</string>
     <string name="ip4p_error_invalid_format">Invalid IP4P address format. Expected: 2001::port:ip4hi:ip4lo</string>
     <string name="ip4p_error_dns_timeout">DNS resolution timed out</string>

@@ -16,6 +16,8 @@ import org.jellyfin.androidtv.auth.model.Server
 import org.jellyfin.androidtv.auth.model.ServerAdditionState
 import org.jellyfin.androidtv.auth.model.UnableToConnectState
 import org.jellyfin.androidtv.auth.store.AuthenticationStore
+import org.jellyfin.androidtv.util.Ip2pResolver
+import org.jellyfin.androidtv.util.Ip2pResult
 import org.jellyfin.androidtv.util.Ip4pResolver
 import org.jellyfin.androidtv.util.Ip4pResult
 import org.jellyfin.androidtv.util.sdk.toServer
@@ -48,7 +50,7 @@ interface ServerRepository {
 
 	fun setCurrentServer(server: Server?)
 
-	fun addServer(address: String, isIp4p: Boolean = false, https: Boolean = false): Flow<ServerAdditionState>
+	fun addServer(address: String, isIp4p: Boolean = false, isIp2p: Boolean = false, https: Boolean = false): Flow<ServerAdditionState>
 	suspend fun getServer(id: UUID, eagerUpdate: Boolean = false): Server?
 	suspend fun updateServer(server: Server, force: Boolean = false): Boolean
 	suspend fun deleteServer(server: UUID): Boolean
@@ -100,23 +102,34 @@ class ServerRepositoryImpl(
 	}
 
 	// Mutating data
-	override fun addServer(address: String, isIp4p: Boolean, https: Boolean): Flow<ServerAdditionState> = flow {
+	override fun addServer(address: String, isIp4p: Boolean, isIp2p: Boolean, https: Boolean): Flow<ServerAdditionState> = flow {
 		Timber.i("Adding server %s (isIp4p=%b)", address, isIp4p)
 
 		emit(ConnectingState(address))
 
-		// IP4P: resolve domain/address to a connectable URL before SDK discovery
-		val effectiveAddress = if (isIp4p) {
-			val result = Ip4pResolver.resolveToUrl(address, https)
-			if (result is Ip4pResult.Success) {
-				Timber.i("IP4P resolved: %s → %s", address, result.url)
-				result.url
-			} else {
-				Timber.w("IP4P resolution failed: %s", result)
-				address // fall through, SDK discovery will fail with a clear error
+		// Resolve IP4P/IP2P address before SDK discovery
+		val effectiveAddress = when {
+			isIp2p -> {
+				val result = Ip2pResolver.resolveToUrl(address, https)
+				if (result is Ip2pResult.Success) {
+					Timber.i("IP2P resolved: %s → %s", address, result.url)
+					result.url
+				} else {
+					Timber.w("IP2P resolution failed: %s", result)
+					address
+				}
 			}
-		} else {
-			address
+			isIp4p -> {
+				val result = Ip4pResolver.resolveToUrl(address, https)
+				if (result is Ip4pResult.Success) {
+					Timber.i("IP4P resolved: %s → %s", address, result.url)
+					result.url
+				} else {
+					Timber.w("IP4P resolution failed: %s", result)
+					address
+				}
+			}
+			else -> address
 		}
 
 		val addressCandidates = jellyfin.discovery.getAddressCandidates(effectiveAddress)
@@ -271,6 +284,7 @@ class ServerRepositoryImpl(
 		setupCompleted = setupCompleted,
 		dateLastAccessed = Instant.ofEpochMilli(lastUsed),
 		isIp4p = isIp4p,
+			isIp2p = isIp2p,
 	)
 
 	/**

@@ -238,7 +238,11 @@ class SelectServerFragment : Fragment() {
 			val (serverState, server) = statefulServer
 
 			// Set data
-			name = if (server.isIp4p) "${server.name} [IP4P]" else server.name
+			name = when {
+				server.isIp2p -> "${server.name} [IP2P]"
+				server.isIp4p -> "${server.name} [IP4P]"
+				else -> server.name
+			}
 			address = server.address
 			version = server.version
 

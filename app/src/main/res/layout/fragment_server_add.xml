@@ -60,9 +60,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/ip4p_toggle_label"
-        android:nextFocusDown="@id/ip4p_https_toggle"
+        android:nextFocusDown="@id/ip2p_toggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/address" />
+
+    <CheckBox
+        android:id="@+id/ip2p_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/ip2p_toggle_label"
+        android:nextFocusDown="@id/ip4p_https_toggle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ip4p_toggle" />
 
     <CheckBox
         android:id="@+id/ip4p_https_toggle"

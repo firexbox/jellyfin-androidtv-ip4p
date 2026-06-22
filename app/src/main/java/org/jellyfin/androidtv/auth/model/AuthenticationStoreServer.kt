@@ -24,4 +24,5 @@ data class AuthenticationStoreServer(
 	@SerialName("last_refreshed") val lastRefreshed: Long = Instant.now().toEpochMilli(),
 	val users: Map<UUID, AuthenticationStoreUser> = emptyMap(),
 	@SerialName("is_ip4p") val isIp4p: Boolean = false,
+	@SerialName("is_ip2p") val isIp2p: Boolean = false,
 )

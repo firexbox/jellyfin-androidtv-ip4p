@@ -18,6 +18,7 @@ data class Server(
 	val setupCompleted: Boolean = true,
 	var dateLastAccessed: Instant = Instant.MIN,
 	val isIp4p: Boolean = false,
+	val isIp2p: Boolean = false,
 ) {
 	val serverVersion = version?.let(ServerVersion::fromString)
 	val versionSupported = serverVersion != null && serverVersion >= ServerRepository.minimumServerVersion

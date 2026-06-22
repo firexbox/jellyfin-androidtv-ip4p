@@ -10,6 +10,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.jellyfin.androidtv.auth.model.Server
 import org.jellyfin.androidtv.util.Ip4pResolver
+import org.jellyfin.androidtv.util.Ip2pResolver
+import org.jellyfin.androidtv.util.Ip2pResult
 import org.jellyfin.androidtv.util.Ip4pResult
 import org.jellyfin.androidtv.auth.store.AuthenticationPreferences
 import org.jellyfin.androidtv.auth.store.AuthenticationStore
@@ -140,8 +142,11 @@ class SessionRepositoryImpl(
 		val deviceInfo = session?.let { defaultDeviceInfo.forUser(it.userId) } ?: defaultDeviceInfo
 		Timber.i("Updating current session. userId=${session?.userId} server=${server?.serverVersion}")
 
-		// Re-resolve IP4P server address before applying session (NAT mapping may have changed)
-		if (server?.isIp4p == true) {
+		// Re-resolve IP4P/IP2P server address before applying session (NAT mapping may have changed)
+		if (server?.isIp2p == true) {
+			val result = Ip2pResolver.resolveToUrl(server.address)
+			if (result is Ip2pResult.Success) server.address = result.url
+		} else if (server?.isIp4p == true) {
 			val result = Ip4pResolver.resolveToUrl(server.address)
 			if (result is Ip4pResult.Success) server.address = result.url
 		}

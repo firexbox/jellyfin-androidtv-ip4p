@@ -15,8 +15,8 @@ class ServerAddViewModel(
 	private val _state = MutableStateFlow<ServerAdditionState?>(null)
 	val state = _state.asStateFlow()
 
-	fun addServer(address: String, isIp4p: Boolean = false, https: Boolean = false) {
-		serverRepository.addServer(address, isIp4p).onEach { state ->
+	fun addServer(address: String, isIp4p: Boolean = false, isIp2p: Boolean = false, https: Boolean = false) {
+		serverRepository.addServer(address, isIp4p, isIp2p).onEach { state ->
 			_state.value = state
 		}.launchIn(viewModelScope)
 	}

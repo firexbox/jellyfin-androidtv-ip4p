@@ -117,6 +117,7 @@ class ServerAddFragment : Fragment() {
 		binding.address.text.isNotBlank() -> startupViewModel.addServer(
 			address = binding.address.text.toString(),
 			isIp4p = binding.ip4pToggle.isChecked,
+			isIp2p = binding.ip2pToggle.isChecked,
 			https = binding.ip4pHttpsToggle.isChecked,
 		)
 		else -> binding.error.setText(R.string.server_field_empty)

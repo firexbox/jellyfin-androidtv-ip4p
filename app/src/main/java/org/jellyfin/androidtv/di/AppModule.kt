@@ -13,6 +13,8 @@ import coil3.serviceLoaderEnabled
 import coil3.svg.SvgDecoder
 import coil3.util.Logger
 import org.jellyfin.androidtv.BuildConfig
+import okhttp3.OkHttpClient
+import org.jellyfin.androidtv.util.Ip2pDns
 import org.jellyfin.androidtv.auth.repository.ServerRepository
 import org.jellyfin.androidtv.auth.repository.UserRepository
 import org.jellyfin.androidtv.auth.repository.UserRepositoryImpl
@@ -78,7 +80,10 @@ val defaultDeviceInfo = named("defaultDeviceInfo")
 val appModule = module {
 	// SDK
 	single(defaultDeviceInfo) { androidDevice(get()) }
-	single { OkHttpFactory() }
+	single {
+		val client = OkHttpClient.Builder().dns(Ip2pDns).build()
+		OkHttpFactory(client)
+	}
 	single { HttpClientOptions() }
 	single {
 		createJellyfin {
